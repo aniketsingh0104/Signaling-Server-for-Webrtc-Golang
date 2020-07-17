@@ -25,6 +25,10 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error WebSocketHandler: ", err)
 		return
 	}
+	connection := &Connection{
+		ws:   ws,
+		send: make(chan []byte, 256),
+	}
 	// make connection here and start readMessage in a thread
-	ws.ReadMessage()
+	go connection.readMessage()
 }

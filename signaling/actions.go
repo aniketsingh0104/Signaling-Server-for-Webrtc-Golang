@@ -27,6 +27,9 @@ const END string = "END" // *also a reply message
 // to leave the room / meeting
 const LEAVE string = "LEAVE"
 
+// to send any message to room memebers
+const MESSAGE string = "MESSAGE"
+
 /*----------------------------------------------------------*/
 
 // REPLY ACTIONS
@@ -38,4 +41,4 @@ const READY string = "READY"
 const WAIT_PAIR string = "WAIT_PAIR"
 
 // action to indicate wait for pair to make offer
-const WAIT_OFFER string = "WAIT_OFFER"
+const WAIT string = "WAIT"
