@@ -42,3 +42,16 @@ const WAIT_PAIR string = "WAIT_PAIR"
 
 // action to indicate wait for pair to make offer
 const WAIT string = "WAIT"
+
+// action to indicate error
+const ERROR string = "ERROR"
+
+/*----------------------------------------------------------*/
+
+// UNREGISTER ACTIONS
+
+// action to ungister all users i.e. end meeting
+const ALL string = "ALL"
+
+// action to unregister just one user
+const SELF string = "SELF"

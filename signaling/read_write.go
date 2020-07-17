@@ -41,6 +41,9 @@ func (connection *Connection) readMessage() {
 		// take suitable actions
 		switch msg.Action {
 		case START:
+			//TODO: Checks
+			// 1. Rooms should exist in database
+			// 2. If user is the owner then room should belong to him
 			// set user id
 			connection.userId = msg.UserId
 			// data in messgae will be room id
@@ -51,6 +54,8 @@ func (connection *Connection) readMessage() {
 			// handle one more thing sending the reply back
 			// reply should be handled after the registration so handle in room_managers
 		case JOIN:
+			//TODO: Checks
+			// 1. Rooms should exist in database
 			// set user id
 			connection.userId = msg.UserId
 			// data in messgae will be room id
@@ -61,9 +66,17 @@ func (connection *Connection) readMessage() {
 		case END:
 			// handle deregistration
 			// only applicable when the requester is the owner of the room
+			// check if user is the owner
+			if user.isOwner {
+				// iterate though all users and remove them one by one
+				roomManager.unregister <- Unregister{user: user, action: ALL}
+			} else {
+				log.Println("User is not the owner of the room END not applicable")
+				// TODO: send some reply to user
+			}
 		case LEAVE:
-			// handle deregistration
-			// remove user from the room and if room becomes empty then delete room
+			// just send user to leave
+			roomManager.unregister <- Unregister{user: user, action: SELF}
 		case MESSAGE:
 			if user.roomId != "" {
 				broadcastMess := _Message{
@@ -74,15 +87,7 @@ func (connection *Connection) readMessage() {
 				roomManager.broadcast <- broadcastMess
 			} else {
 				log.Printf("Error in broadcast message: %v", err)
-				// error reply
-				// marshalled, err := json.Marshal(Message{
-				// 	Action: READY,
-				// 	UserId: room.owner.userId,
-				// })
-				// if err != nil {
-				// 	log.Fatalf("Marshalling Error in Register User: %v", err)
-				// }
-				// room.owner.send <- marshalled
+				// TODO: send some reply of error
 			}
 		}
 	}
