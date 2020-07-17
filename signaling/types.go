@@ -49,5 +49,5 @@ type RoomManager struct {
 	register chan User
 
 	// unregister channel to handle leave / end meeting request from clients
-
+	unregister chan User
 }

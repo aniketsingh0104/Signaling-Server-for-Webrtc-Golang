@@ -3,8 +3,17 @@ package signaling
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/gorilla/websocket"
+)
+
+const (
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
+
+	// Time allowed to read the next message from the peer.
+	readWait = 60 * time.Second
 )
 
 // readMessage will constantly read message from the websocket connection
@@ -13,6 +22,8 @@ func (connection *Connection) readMessage() {
 		// unregister will come here
 		connection.ws.Close()
 	}()
+	// set maximum time limit for reading a messgage
+	connection.ws.SetReadDeadline(time.Now().Add(readWait))
 	user := User{connection: connection}
 	for {
 		_, byteMsg, err := connection.ws.ReadMessage()
@@ -77,24 +88,24 @@ func (connection *Connection) readMessage() {
 	}
 }
 
-// // write writes a message with the given message type and payload.
-// func (c *Connection) write(mt int, payload []byte) error {
-// 	c.ws.SetWriteDeadline(time.Now().Add(writeWait))
-// 	return c.ws.WriteMessage(mt, payload)
-// }
+// write writes a message with the given message type and payload.
+func (c *Connection) write(mt int, payload []byte) error {
+	c.ws.SetWriteDeadline(time.Now().Add(writeWait))
+	return c.ws.WriteMessage(mt, payload)
+}
 
 func (connection *Connection) writeMessage() {
 	defer func() {
 		connection.ws.Close()
 	}()
 	for {
-		// select {
-		// case message, ok := <-connection.send:
-		// 	if !ok {
-		// 		// handle close connection
-		// 		return
-		// 	}
-		// 	// if err := connection.write()
-		// }
+		message, ok := <-connection.send
+		if !ok {
+			connection.write(websocket.CloseMessage, []byte{})
+			return
+		}
+		if err := connection.write(websocket.TextMessage, message); err != nil {
+			return
+		}
 	}
 }

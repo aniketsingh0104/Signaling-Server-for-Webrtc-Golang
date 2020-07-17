@@ -31,4 +31,5 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// make connection here and start readMessage in a thread
 	go connection.readMessage()
+	go connection.writeMessage()
 }
