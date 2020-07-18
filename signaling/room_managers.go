@@ -20,7 +20,7 @@ func (r *RoomManager) deleteUser(connection *Connection, room *Room) {
 	}
 }
 
-func (r *RoomManager) handlerChnnels() {
+func (r *RoomManager) handleChannels() {
 	for {
 		select {
 		case user := <-r.register:

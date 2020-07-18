@@ -12,13 +12,14 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-var roomManager = RoomManager{
+var RManager = RoomManager{
 	rooms:     make(map[string]*Room),
 	broadcast: make(chan _Message),
 	register:  make(chan User),
 }
 
 func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {

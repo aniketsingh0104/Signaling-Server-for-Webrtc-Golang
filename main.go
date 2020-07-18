@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	go signaling.RManager.handleChannels()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", signaling.WebSocketHandler)
 	c := cors.New(cors.Options{

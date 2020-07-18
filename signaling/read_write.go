@@ -50,7 +50,7 @@ func (connection *Connection) readMessage() {
 			user.roomId = msg.Data.(string)
 			// only owner of a room can start a meeting
 			user.isOwner = true
-			roomManager.register <- user
+			RManager.register <- user
 			// handle one more thing sending the reply back
 			// reply should be handled after the registration so handle in room_managers
 		case JOIN:
@@ -62,21 +62,21 @@ func (connection *Connection) readMessage() {
 			user.roomId = msg.Data.(string)
 			// only owner of a room can start a meeting
 			user.isOwner = false
-			roomManager.register <- user
+			RManager.register <- user
 		case END:
 			// handle deregistration
 			// only applicable when the requester is the owner of the room
 			// check if user is the owner
 			if user.isOwner {
 				// iterate though all users and remove them one by one
-				roomManager.unregister <- Unregister{user: user, action: ALL}
+				RManager.unregister <- Unregister{user: user, action: ALL}
 			} else {
 				log.Println("User is not the owner of the room END not applicable")
 				// TODO: send some reply to user
 			}
 		case LEAVE:
 			// just send user to leave
-			roomManager.unregister <- Unregister{user: user, action: SELF}
+			RManager.unregister <- Unregister{user: user, action: SELF}
 		case MESSAGE:
 			if user.roomId != "" {
 				broadcastMess := _Message{
@@ -84,7 +84,7 @@ func (connection *Connection) readMessage() {
 					message: msg,
 					roomId:  user.roomId,
 				}
-				roomManager.broadcast <- broadcastMess
+				RManager.broadcast <- broadcastMess
 			} else {
 				log.Printf("Error in broadcast message: %v", err)
 				// TODO: send some reply of error
